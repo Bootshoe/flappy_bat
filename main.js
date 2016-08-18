@@ -8,6 +8,7 @@ var mainState = {
     // Load the bird sprite
     game.load.image('pipe', 'assets/joker.png');
     game.load.image('background', 'assets/gotham2.jpg')
+    game.load.image('robin', 'assets/robin.png')
   },
 
   create: function() {
@@ -22,18 +23,24 @@ var mainState = {
 
     this.bird = game.add.sprite(100, 245, 'bird');
     // Display the bird at the position x=100 and y=245
+    this.robin = game.add.sprite(50, 245, 'robin');
 
     game.physics.arcade.enable(this.bird);
     // Add physics to the bird
     // Needed for: movements, gravity, collisions, etc.
+    game.physics.arcade.enable(this.robin);
 
     this.bird.body.gravity.y = 1000;
     // Add gravity to the bird to make it fall
+    this.robin.body.gravity.y = 1000;
 
-    var spaceKey = game.input.keyboard.addKey(
-                    Phaser.Keyboard.SPACEBAR);
-    spaceKey.onDown.add(this.jump, this);
+    var aKey = game.input.keyboard.addKey(
+                    Phaser.Keyboard.A);
+    aKey.onDown.add(this.jump, this);
     // Call the 'jump' function when the spacekey is hit
+        var lKey = game.input.keyboard.addKey(
+                    Phaser.Keyboard.L);
+    lKey.onDown.add(this.jump2, this);
 
     this.pipes = game.add.group();
 
@@ -44,6 +51,7 @@ var mainState = {
           { font: "30px Arial", fill: "#ffffff" });
 
     this.bird.anchor.setTo(-0.2, 0.5);
+    this.robin.anchor.setTo(-0.2, 0.5);
 
   },
 
@@ -55,12 +63,18 @@ var mainState = {
         this.restartGame();
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
+     if (this.robin.y < 0 || this.robin.y > 490)
+        this.restartGame();
 
       game.physics.arcade.overlap(
         this.bird, this.pipes, this.hitPipe, null, this);
+      game.physics.arcade.overlap(
+        this.robin, this.pipes, this.hitPipe, null, this);
 
     if(this.bird.angle < 20)
       this.bird.angle += 1;
+    if(this.robin.angle < 20)
+      this.robin.angle += 1;
 
 
 
@@ -70,6 +84,7 @@ var mainState = {
   jump: function() {
     // Add a vertical velocity to the bird
     this.bird.body.velocity.y = -350;
+    // this.robin.body.velocity.y = -350;
 
   // Create an animation on the bird
     var animation = game.add.tween(this.bird);
@@ -81,6 +96,30 @@ var mainState = {
     animation.start();
 
     if (this.bird.alive == false)
+    return;
+   // if (this.robin.alive == false)
+   //  return;
+
+
+  },
+
+  jump2: function() {
+    // Add a vertical velocity to the bird
+    // this.bird.body.velocity.y = -350;
+    this.robin.body.velocity.y = -350;
+
+  // Create an animation on the bird
+    var animation = game.add.tween(this.robin);
+
+    //change the angle of the bird to -20 in 100 milliseconds
+    animation.to({angle: -20}, 100);
+
+    //add start the animation
+    animation.start();
+
+    // if (this.bird.alive == false)
+    // return;
+   if (this.robin.alive == false)
     return;
 
 
@@ -131,9 +170,12 @@ var mainState = {
     // It means the bird is already falling off the screen
     if (this.bird.alive == false)
         return;
+      if (this.robin.alive == false)
+        return;
 
     // Set the alive property of the bird to false
     this.bird.alive = false;
+    this.robin.alive = false;
 
     // Prevent new pipes from appearing
     game.time.events.remove(this.timer);
