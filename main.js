@@ -56,14 +56,13 @@ var mainState = {
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
 
-    game.physics.arcade.overlap(
-      this.bird, this.pipes, this.restartGame, null, this);
+      game.physics.arcade.overlap(
+        this.bird, this.pipes, this.hitPipe, null, this);
 
     if(this.bird.angle < 20)
       this.bird.angle += 1;
 
-    game.physics.arcade.overlap(
-      this.bird, this.pipes, this.hitPipe, null, this);
+
 
   },
 
@@ -82,7 +81,7 @@ var mainState = {
     animation.start();
 
     if (this.bird.alive == false)
-      return;
+    return;
 
 
   },
@@ -91,6 +90,8 @@ var mainState = {
   restartGame: function(){
     //Start the 'main' state, which restarts the game
     game.state.start('main')
+
+
   },
 
   addOnePipe: function(x, y) {
@@ -126,20 +127,22 @@ var mainState = {
   },
 
   hitPipe: function() {
-    //if the bird has already hit a pip, do nothing
-    //it means the bird is already falling off the screen
+    // If the bird has already hit a pipe, do nothing
+    // It means the bird is already falling off the screen
     if (this.bird.alive == false)
-      return;
+        return;
 
-    //set the alive property of the bird to false
-    this.bird.alive  = false;
+    // Set the alive property of the bird to false
+    this.bird.alive = false;
 
-    //go through all the pipes, and stop their movement
+    // Prevent new pipes from appearing
+    game.time.events.remove(this.timer);
+
+    // Go through all the pipes, and stop their movement
     this.pipes.forEach(function(p){
-      p.body.velocity.x = 0;
+        p.body.velocity.x = 0;
     }, this);
-
-  },
+},
 
 };
 
