@@ -46,8 +46,11 @@ var mainState = {
 
     this.timer = game.time.events.loop(1500, this.addRowOfPipes, this);
 
-    this.score = 0;
-    this.labelScore = game.add.text(20, 20, "0",
+    this.scoreB = 0;
+    this.scoreR = 0;
+    this.labelScoreR = game.add.text(20, 20, "0",
+          { font: "30px Arial", fill: "#ffffff" });
+    this.labelScoreB = game.add.text(80, 20, "0",
           { font: "30px Arial", fill: "#ffffff" });
 
     this.bird.anchor.setTo(-0.2, 0.5);
@@ -59,15 +62,15 @@ var mainState = {
     // This function is called 60 times per second
     // It contains the game's logic
 
-    if (this.bird.y < 0 || this.bird.y > 490)
+    if ((this.bird.y < 0 || this.bird.y > 490) && (this.robin.y < 0 || this.robin.y > 490) )
         this.restartGame();
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
-     if (this.robin.y < 0 || this.robin.y > 490)
-        this.restartGame();
+     // if
+     //    this.restartGame();
 
       game.physics.arcade.overlap(
-        this.bird, this.pipes, this.hitPipe, null, this);
+        this.bird, this.pipes, this.hitPipe, null, this)
       game.physics.arcade.overlap(
         this.robin, this.pipes, this.hitPipe, null, this);
 
@@ -83,7 +86,7 @@ var mainState = {
   // Make the bird jump
   jump: function() {
     // Add a vertical velocity to the bird
-    this.bird.body.velocity.y = -350;
+    this.bird.body.velocity.y = -300;
     // this.robin.body.velocity.y = -350;
 
   // Create an animation on the bird
@@ -106,7 +109,7 @@ var mainState = {
   jump2: function() {
     // Add a vertical velocity to the bird
     // this.bird.body.velocity.y = -350;
-    this.robin.body.velocity.y = -350;
+    this.robin.body.velocity.y = -300;
 
   // Create an animation on the bird
     var animation = game.add.tween(this.robin);
@@ -161,22 +164,36 @@ var mainState = {
     for (var i = 0; i < 8; i++)
         if (i != hole && i != hole + 1)
             this.addOnePipe(400, i * 60 + 10);
-    this.score += 1;
-    this.labelScore.text = this.score;
+
+    this.scoreB += 1;
+    this.labelScoreB.text = this.scoreB;
+    console.log(this.scoreB)
+    console.log(this)
+
+    this.scoreR += 1;
+    this.labelScoreR.text = this.scoreR;
+    console.log(this.scoreR)
   },
 
   hitPipe: function() {
     // If the bird has already hit a pipe, do nothing
     // It means the bird is already falling off the screen
-    if (this.bird.alive == false)
-        return;
-      if (this.robin.alive == false)
-        return;
+    // if (this.bird.alive == false){
+    //     return;
+    //     this.bird.alive = false;
+
+    // } else(this.robin.alive == false){
+    //     return;
 
     // Set the alive property of the bird to false
-    this.bird.alive = false;
-    this.robin.alive = false;
 
+    // this.robin.alive = false;
+
+    if ((this.bird.alive == false) && (this.robin.alive == false))
+        return;
+
+      this.bird.alive = false;
+      this.robin.alive = false;
     // Prevent new pipes from appearing
     game.time.events.remove(this.timer);
 
@@ -184,6 +201,7 @@ var mainState = {
     this.pipes.forEach(function(p){
         p.body.velocity.x = 0;
     }, this);
+
 },
 
 };
